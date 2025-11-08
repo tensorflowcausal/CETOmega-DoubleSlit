@@ -9,11 +9,9 @@ jobs:
 build:
 runs-on: ubuntu-latest
 steps:
-- name: Checkout
-uses: actions/checkout@v4
+- uses: actions/checkout@v4
 
-- name: Set up Python
-uses: actions/setup-python@v5
+- uses: actions/setup-python@v5
 with:
 python-version: "3.11"
 
@@ -27,11 +25,13 @@ env:
 MPLBACKEND: Agg
 run: |
 python simulate_double_slit.py
+ls -R
 
-- name: Upload results
+- name: Upload artifacts
 uses: actions/upload-artifact@v4
 with:
 name: outputs
 path: |
 data/results.csv
 figs/pattern.png
+if-no-files-found: error
