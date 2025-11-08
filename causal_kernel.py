@@ -1,29 +1,36 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import os
 
-def causal_phase(x, d, lam, L, gamma=0.04, sigma_rho=0.5e-3):
-    """
-    Causal phase Phi(x) for the CETOmega kernel.
-    Parameters
-    ----------
-    x : ndarray
-        Screen coordinate (m)
-    d : float
-        Slit separation (m)
-    lam : float
-        Wavelength (m)
-    L : float
-        Source-to-screen distance (m)
-    gamma : float
-        Causal coupling strength (dimensionless, ~0.0–0.1 typical)
-    sigma_rho : float
-        Memory width (m), controls spectral/causal broadening
-    Returns
-    -------
-    phi : ndarray
-        Causal phase in radians
-    """
-    # Memory profile (Gaussian)
-    f = np.exp(-(x**2) / (2.0 * sigma_rho**2))
-    # Paraxial phase plus causal correction
-    phi = (2.0 * np.pi * x * d) / (lam * L) * (1.0 + gamma * f)
-    return phi
+# Crear carpetas si no existen
+os.makedirs("data", exist_ok=True)
+os.makedirs("figs", exist_ok=True)
+
+# Parámetros físicos básicos
+wavelength = 500e-9       # 500 nm
+slit_distance = 50e-6     # separación entre rendijas (50 µm)
+screen_distance = 1.0     # distancia a la pantalla (1 m)
+num_points = 1000
+
+x = np.linspace(-0.01, 0.01, num_points)  # coordenada en la pantalla
+beta = (np.pi * slit_distance * x) / (wavelength * screen_distance)
+intensity = (np.cos(beta))**2             # interferencia de doble rendija
+
+# Guardar datos
+df = pd.DataFrame({"x (m)": x, "intensity": intensity})
+df.to_csv("data/results.csv", index=False)
+
+# Graficar patrón
+plt.figure(figsize=(6,4))
+plt.plot(x*1e3, intensity, color='blue')
+plt.title("CETOmega Double Slit Pattern")
+plt.xlabel("x [mm]")
+plt.ylabel("Intensity (a.u.)")
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("figs/pattern.png")
+
+print("✅ Simulation complete.")
+print(f"Max intensity: {intensity.max():.3f}")
+print(f"Min intensity: {intensity.min():.3f}")
