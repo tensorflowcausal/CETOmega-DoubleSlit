@@ -20,7 +20,6 @@ pip install -r requirements.txt
 
 ## Run
 ```bash
-cd src
 python simulate_double_slit.py   # generates pattern.png and results.csv
 python utils.py                  # generates visibility.png
 ```
