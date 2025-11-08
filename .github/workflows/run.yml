@@ -1,22 +1,37 @@
-name: Run
+name: Run CETΩmega simulation
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: |
+
+      - name: Install dependencies
+        run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install matplotlib numpy
+
+      - name: Run double-slit simulation
+        run: |
           python simulate_double_slit.py
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
         with:
           name: outputs
           path: |
-            data/results.csv
-            figs/pattern.png
+            figs/
+            data/
